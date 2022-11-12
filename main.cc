@@ -281,6 +281,17 @@ void battle_mode() {
 	}
 
 	//Whichever Pokemon has the higher speed goes first
+	
+	/*if (activeP1.speed > activeP2.speed) p1 goes first;
+	if (activeP2.speed > activeP1.speed) p2 goes first;
+	if (activeP1.speed == activeP2.speed) {
+			srand(time(0));
+			if (rand() % 2 == 0) p1 goes first
+			else p2 goes first;*/
+
+
+
+
 	//Have them do damage to each other based on their move * power * type modifier
 	//Target Pokémon reduces damage based on its defense or special defense
 }
