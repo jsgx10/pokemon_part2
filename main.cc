@@ -1,5 +1,5 @@
 //Fill out this comment with your names and which bullet points you did
-//Partners:
+//Partners:Samuel Garnica (1 & 2), Ayanna Avalos
 //Bullet Points:
 //Extra Credit:
 #include <iostream>
