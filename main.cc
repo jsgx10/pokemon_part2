@@ -175,7 +175,6 @@ void battle_mode() {
 	cin.ignore();
 	getline(cin, input);
 	int pokemonInd1 = 0;
-
 	string pokemonStr1;
 	if (input.size() and isdigit(input.at(0))) {
 		pokemonInd1 = stoi(input);
@@ -192,7 +191,7 @@ void battle_mode() {
 			check = true;
 		}
 	}
-	if (!check) die();
+	if (!check) die();//if false then string name doesn't exist in pokemon_db, invalid input
 	cout << "You picked: "  << activeP1.name << endl;
 	cout << "Please enter a move index or name. Enter -1 when done" << endl;
 	cin.clear();
