@@ -1,8 +1,8 @@
 //Fill out this comment with your names and which bullet points you did
 //Partners:Samuel Garnica (1 & 2), Spencer Ha (3 & 4), Ayanna Avalos (5)
-//Partners:Samuel Garnica (1 & 2), Ayanna Avalos(5), Spencer Ha
+//Partners:Samuel Garnica (1 & 2), Ayanna Avalos(5 & EC), Spencer Ha
 //Bullet Points:
-//Extra Credit:
+//Extra Credit:Top Down Map and health inventory experience?
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -11,9 +11,15 @@
 #include <sstream>
 #include <string>
 #include <cctype>
+#include "/public/read.h"
+#include "/public/colors.h"
 using namespace std;
 
 void die(string s = "INVALID INPUT!") {
+	cout << s << endl;
+	exit(EXIT_FAILURE);
+}
+void diee(string s = "GAME OVER!") {
 	cout << s << endl;
 	exit(EXIT_FAILURE);
 }
@@ -194,6 +200,9 @@ void battle_mode() {
 	for (const Pokemon &poke : pokemon_db) {
 		if (pokemonInd1 == poke.index or pokemonStr1 == poke.name) {
 			activeP1 = poke;
+			pokemon1type1 = poke.type1;//ADDED FOR 5, when true, type 1 from database is put into variable pokemon1type1 (same with line below)
+			pokemon1type2 = poke.type2;
+
 			check = true;
 		}
 	}
@@ -248,8 +257,8 @@ void battle_mode() {
 	for (const Pokemon &poke : pokemon_db) {
 		if (pokemonInd2 == poke.index or pokemonStr2 == poke.name) {
 			activeP2 = poke;
-			pokemon1type1 = poke.type1;//ADDED FOR 5, when true, type 1 from database is put into variable pokemon1type1 (same with line below)
-			pokemon1type2 = poke.type2;
+			pokemon2type1 = poke.type1;//ADDED FOR 5, when true, type 1 from database is put into variable pokemon1type1 (same with line below)
+			pokemon2type2 = poke.type2;
 			//  cout << poke.type1 << poke.type2 << endl; //ADDED FOR 5, simply to see if worked
 
 			check = true;
@@ -918,18 +927,12 @@ void battle_mode() {
 	numbers[17][16] = 2;
 	numbers[17][17] = 1;
 //when attacker = pokemon1
-	float damagetypesyst = 0;
-	float damagetypesyst2 = 0;
-	if (activeP1.speed > activeP2.speed) {
-		damagetypesyst = numbers[p1t1][p2t1];
-		damagetypesyst2 = numbers[p1t2][p2t2];
-	}
-//attacker = pokemon2
-	if (activeP1.speed == activeP2.speed) {
+	float damage1 = 0;
+	float damage2 = 0;
+	damage1 = numbers[p1t1][p2t1] * numbers[p2t1][p2t2];
 
-		damagetypesyst = numbers[p2t1][p1t1];
-		damagetypesyst2 = numbers[p2t2][p1t2];
-	}
+	damage2 = numbers[p2t1][p1t1] * numbers[p2t2][p1t2];
+//attacker = pokemon2
 //END of 5 ----
 //Whichever Pokemon has the higher speed goes first
 
@@ -974,9 +977,9 @@ void battle_mode() {
 		if (!check) die();
 		cout << activeP1.name << " used " << temp_move1.name << "!" << endl;
 		if (temp_move1.type == activeP1.type1 or temp_move1.type == activeP1.type2) // Checks if move type matches either of the attacking pokemon's types.
-			activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
+			activeP2.hp = (activeP2.hp * damage1) - double(temp_move1.power * activeP1.attack) / activeP2.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
 		else
-			activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense; // Formula for no STAB and no type modifier.
+			activeP2.hp = (activeP2.hp * damage1) - double(temp_move1.power * activeP1.attack) / activeP2.defense; // Formula for no STAB and no type modifier.
 		if (activeP2.hp <= 0) {
 			cout << activeP2.name << " has fainted. " << activeP1.name << " wins!" << endl;
 			exit(0);
@@ -1011,9 +1014,9 @@ void battle_mode() {
 			if (!check) die();
 			cout << activeP2.name << " used " << temp_move2.name << "!" << endl;
 			if (temp_move2.type == activeP2.type1 or temp_move2.type == activeP2.type2) // Checks if move type matches either of the attacking pokemon's types.
-				activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
+				activeP1.hp = (activeP1.hp * damage2) - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
 			else
-				activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
+				activeP1.hp = (activeP1.hp * damage2) - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
 			if (activeP1.hp <= 0) {
 				cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
 				exit(0);
@@ -1035,8 +1038,92 @@ void battle_mode() {
 }
 
 //PART 2
-void explore_mode() {
+//void explore_mode() {
+//}
+
+
+vector<string> world_map = {
+	"#################################################################################################################################################",
+	"#                                                                            hh       ########      m                m  m   h h                 #",
+	"#  h #         ####                  #####                  m               #  m   m    #            h               ##     # # ##              #",
+	"#    #                                                                      #  ###hm#           m                 h              m        h     #",
+	"#    #                                          #                           ####  #    h        m               #####               h   mm      #",
+	"###                   #                         #                           #          ##                 h                m         h          #",
+	"#                     #                                     h               # #  h     m                ##               h        ##        #####",
+	"#                     #      h                                                #                  h                  m             #            ##",
+	"#                m    #               m      ####                                     m                       h              # m              mh#",
+	"#                     #      h                                       h                                      #                                   #",
+	"#                                                                             ###                            ###        h            m    h  h  #",
+	"#                            m        m                                         #           #                          #          ### h         #",
+	"#  ###                       m                         ###                                    h m               h       m         #             #",
+	"#                                                                             #           h                   m                    m            #",
+	"#                                   ###                                       h                m                   h                m           #",
+	"#                    #                          #                             m    #               m      ####    m                             #",
+	"#         #           #                          #          ###                                                                                 #",
+	"#         #           #                          #                                                                                      m       #",
+	"#    #    #                           m                                                            mhm                           mhm            #",
+	"#    #    #           #######                           #                            ##                     #                 h                 #",
+	"###                   #                         #                            ########                          hm             m               h #",
+	"#                     #                                     h                                       ####  #    h        m               ###     #",
+	"#                     #      h                                                                   #           #               #          ### h   #",
+	"#                m    #               m      ####   m                         ####  #    h              m    h   #####                          #",
+	"#      ###               #      h                                                                                               m               #",
+	"#        #                                                                     ####         hmh                         h                  m    #",
+	"#        #                    m        m     #######                           #                                                                #",
+	"#    #                                                                         #     m    #               m      ####    m                      #",
+	"#    #                                          #       a                     #     m                   h                         m mm          #",
+	"###        ##           #                         #                       m                                                                     #",
+	"#                     #                                     h                               #                                                   #",
+	"#                     #      h                                             hm                                                                   #",
+	"#                m    #               m      ####    m                                                #                        m                #",
+	"#                     #      h                       m                h         h                                       h                       #",
+	"###                                                                                         m               ###                 m               #",
+	"#  #                          m        m                                         m                                                              #",
+	"#       #                                        #  m                     ####                                                                  #",
+	"#                                ##             #                            #                              a                                   #",
+	"#         #                  #####                                           #                    hmh             #####                         #",
+	"#                                                                            #        m               h                                         #",
+	"#                            m        m                                         #           #                          #          ### h         #",
+	"#  ###                       m                         ###                                    h m               h       m         #             #",
+	"#                                                                             #           h                   m                    m            #",
+	"#              a                    ###                                       h                m                   h                m           #",
+	"#                    #                          #                             m    #               m      ####    m                             #",
+	"#         #           #                          #          ###                                                                                 #",
+	"#         #           #                          #                                                                                      m       #",
+
+	"#################################################################################################################################################"
+};
+
+char get_world_location(size_t row, size_t col) {
+	if (row >= world_map.size()) return ' ';
+	if (col >= world_map.at(row).size()) return ' ';
+	return world_map.at(row).at(col);
 }
+
+void set_world_location(size_t row, size_t col, char c) {
+	if (row >= world_map.size()) return;
+	if (col >= world_map.at(row).size()) return;
+	world_map.at(row).at(col) = c;
+}
+
+void print_world(size_t player_row, size_t player_col) {
+	clearscreen();
+	movecursor(0, 0);
+	for (size_t row = 0; row < world_map.size(); row++) {
+		for (size_t col = 0; col < world_map.at(row).size(); col++) {
+			if (row == player_row and col == player_col) cout << "B";
+			else
+				cout << world_map.at(row).at(col);
+		}
+		cout << endl;
+	}
+
+
+}
+
+
+
+
 
 int main() {
 	srand(0); //Fixed seed - don't change this
@@ -1119,5 +1206,111 @@ int main() {
 			cout << "Move Index " << m.index << ": " << m.name << " " << " type: " << m.type << " category: " << m.category << " PP: " << m.PP << " power: " << m.power << " accuracy: " << m.accuracy << "%\n";
 	}
 	if (choice == 3) battle_mode(); //PART 2
-	else explore_mode(); //PART 2
+	else { // explore_mode(); //PART 2
+		const int ROWS = world_map.size();
+		const int COLS = world_map.at(0).size(); //MAKE SURE ALL ROWS ARE THE SAME SIZE OR BAD TIMES
+		const int FPS = 60;
+		int row = ROWS / 2, col = COLS / 2;
+		int last_row = -1, last_col = -1; //Save our last position so we only redraw on update
+		int points = 3;//must have some health to be alive?
+		int apple = 0;
+		set_raw_mode(true);
+		show_cursor(false);
+
+		while (true) {
+			int c = toupper(quick_read());//nonblocking
+			if (c == 'Q') break;
+			if (c == 'W' or c == UP_ARROW) {
+				row--;
+				if (get_world_location(row, col) == '#' && c == UP_ARROW) row++; // no walking through walls or off map
+
+
+			}
+			if (c == 'S' or c == DOWN_ARROW) {
+				row++;
+				if (get_world_location(row, col) == '#' && c == DOWN_ARROW) row--;
+			}
+			if (c == 'A' or c == LEFT_ARROW) {
+				col--;
+				if (get_world_location(row, col) == '#' && c == LEFT_ARROW) col++;
+			}
+			if (c == 'D' or c == RIGHT_ARROW) {
+				col++;
+				if (get_world_location(row, col) == '#' && c == RIGHT_ARROW) col--;
+			}
+			if (!(row == last_row and col == last_col)) {
+				print_world(row, col);
+				last_row = row;
+				last_col = col;
+				movecursor(2, COLS + 5);
+				//cout << CYAN << "ROW: " << row << CYAN << " COL: " << col << RESET;
+				movecursor(ROWS + 2, 0);
+				cout << "Welcome Bulbasaur! Pick up points (h) to grow health!  Don't run into monsters (m)!They lower health!" << endl;
+				cout << "Health: " << points << "	Apples: " << apple << "\n";
+				cout.flush();
+			}
+			//  int points = 0;
+			if (get_world_location(row, col) == 'h') {
+				set_world_location(row, col, ' ');
+				movecursor(ROWS + 2, 0);
+				cout << endl;
+				cout << endl;
+				cout << "You picked up a point!\n";
+
+				points++;
+				//  cout << "You have " << points << " points" << endl;
+			}
+			if (get_world_location(row, col) == 'm') {
+				set_world_location(row, col, ' ');
+				movecursor(ROWS + 2, 0);
+				cout << endl;
+				cout << endl;
+				if (apple > 0) {
+					cout << "Monster! Throw the apple to distract it!(type THROW) Or keep apple and lose health (type KEEP). " << endl;
+					string option;
+					cin >> option;
+					if (option == "THROW") {
+						apple = apple - 1;
+						cout << "GREAT CHOICE!KEEP PLAYING!";
+					} else if (option == "KEEP") {
+						cout << "WOW YOU'RE CONFIDENT OR YOU REALLY LIKE APPLES!KEEP PLAYING!\n";
+						points -= 1;
+
+					} else {
+						cout << "You did not use THROW or KEEP!!" << endl;
+						cout << "Monster steals health and apple anyways! KEEP PLAYING!" << endl;
+						points -= 1;
+						apple -= 1;
+					}
+				} else {
+					cout << "MONSTER!\n";
+					points -= 1;
+				}
+				//  cout << "You have " << points << " points" << endl;
+			}
+			if (get_world_location(row, col) == 'a') {
+				set_world_location(row, col, ' ');
+				movecursor(ROWS + 2, 0);
+				cout << endl;
+				cout << endl;
+				apple++;
+				cout << "You have an apple! Apples help in the case that you run into a monster!\n";
+
+				//  cout << "You have " << points << " points" << endl;
+			}
+
+			if (points <= 0) {
+
+				cout << "OH NO! You have no health!" << endl;
+
+				diee();
+			}
+			if (c == ERR) usleep(1'000'000 / FPS);
+		}
+		set_raw_mode(false);
+		show_cursor(true);
+		movecursor(0, 0);
+		clearscreen();
+
+	}
 }
