@@ -308,7 +308,8 @@ void battle_mode() {
 			turn = 1;
 		}
 	}
-	if (turn % 2 == 0) { //Pokemon turn 1 code
+
+	if (turn % 2 == 0) {
 		cout << "What will " << activeP1.name << " do?" << endl;
 		cin.clear();
 		getline(cin, input);
@@ -344,58 +345,58 @@ void battle_mode() {
 		} else if (activeP2.hp > 0) {
 			turn++;
 		}
-
-		if (turn % 2 == 1) { // Pokemon turn 2 code
-			cout << "What will " << activeP2.name << " do?" << endl;
-			cin.clear();
-			getline(cin, input);
-			int p2MoveChoice = 0;
-			string p2MoveChoiceString;
-			if (isdigit(input.at(0))) {
-				p2MoveChoice = stoi(input);
-				if (p2MoveChoice < 0 or p2MoveChoice > p2Moves.size())
-					die();
-			} else {
-				p2MoveChoiceString = input;
-				p2MoveChoiceString.at(0) = toupper(p2MoveChoiceString.at(0));
-				p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1) = toupper(p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1));
-			}
-			Move temp_move2;
-			check = false;
-			for (const Move &M : move_db) {
-				if (p2MoveChoice == M.index or p2MoveChoiceString == M.name) {
-					temp_move2 = M;
-					p2Moves.push_back(temp_move2);
-					check = true;
-				}
-			}
-			if (!check) die();
-			cout << activeP2.name << " used " << temp_move2.name << "!" << endl;
-			if (temp_move2.type == activeP2.type1 or temp_move2.type == activeP2.type2) // Checks if move type matches either of the attacking pokemon's types.
-				activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
-			else
-				activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
-			if (activeP1.hp <= 0) {
-				cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
-				exit(0);
-			} else if (activeP1.hp > 0) {
-				turn++;
-			}
-
-		}
 	}
+	if (turn % 2 == 1) { // Pokemon turn 2 code
+		cout << "What will " << activeP2.name << " do?" << endl;
+		cin.clear();
+		getline(cin, input);
+		int p2MoveChoice = 0;
+		string p2MoveChoiceString;
+		if (isdigit(input.at(0))) {
+			p2MoveChoice = stoi(input);
+			if (p2MoveChoice < 0 or p2MoveChoice > p2Moves.size())
+				die();
+		} else {
+			p2MoveChoiceString = input;
+			p2MoveChoiceString.at(0) = toupper(p2MoveChoiceString.at(0));
+			p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1) = toupper(p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1));
+		}
+		Move temp_move2;
+		check = false;
+		for (const Move &M : move_db) {
+			if (p2MoveChoice == M.index or p2MoveChoiceString == M.name) {
+				temp_move2 = M;
+				p2Moves.push_back(temp_move2);
+				check = true;
+			}
+		}
+		if (!check) die();
+		cout << activeP2.name << " used " << temp_move2.name << "!" << endl;
+		if (temp_move2.type == activeP2.type1 or temp_move2.type == activeP2.type2) { // Checks if move type matches either of the attacking pokemon's types.
+			activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5;
+		} // Formula for damage with STAB modifier and no type modifier.
+		else activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
+		if (activeP1.hp <= 0) {
+			cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
+			exit(0);
+		} else if (activeP1.hp > 0) {
+			turn++;
+		}
+
+	}
+
 
 
 
 
 //Have them do damage to each other based on their move * power * type modifier
 //Target Pokémon reduces damage based on its defense or special defense
-	//Have them do damage to each other based on their move * power * type modifier
-	//Target Pokémon reduces damage based on its defense or special defense
+//Have them do damage to each other based on their move * power * type modifier
+//Target Pokémon reduces damage based on its defense or special defense
 
-	//ADDED FOR 5 below ----- using typessystem
-	//pokemon player 1 , using type 1 & type 2
-	//pokemon player 2, using type 1 & type 2
+//ADDED FOR 5 below ----- using typessystem
+//pokemon player 1 , using type 1 & type 2
+//pokemon player 2, using type 1 & type 2
 	int p1t1 = 0;
 	if (pokemon1type1 == "Normal") {//four if statements to use the type to "lookup" col/row for both types of both pokemon
 		int zero = 0;
