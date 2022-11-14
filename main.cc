@@ -308,83 +308,83 @@ void battle_mode() {
 			turn = 1;
 		}
 	}
-
-	if (turn % 2 == 0) {
-		cout << "What will " << activeP1.name << " do?" << endl;
-		cin.clear();
-		getline(cin, input);
-		int p1MoveChoice = 0;
-		string p1MoveChoiceString;
-		if (isdigit(input.at(0))) {
-			p1MoveChoice = stoi(input);
-			if (p1MoveChoice < 0 or p1MoveChoice > p1Moves.size())
-				die();
-		} else {
-			p1MoveChoiceString = input;
-			p1MoveChoiceString.at(0) = toupper(p1MoveChoiceString.at(0));
-			p1MoveChoiceString.at(p1MoveChoiceString.find(" ") + 1) = toupper(p1MoveChoiceString.at(p1MoveChoiceString.find(" ") + 1));
-		}
-		Move temp_move1;
-		check = false;
-		for (const Move &M : move_db) {
-			if (p1MoveChoice == M.index or p1MoveChoiceString == M.name) {
-				temp_move1 = M;
-				p1Moves.push_back(temp_move1);
-				check = true;
+	while (true) {
+		if (turn % 2 == 0) {
+			cout << "What will " << activeP1.name << " do?" << endl;
+			cin.clear();
+			getline(cin, input);
+			int p1MoveChoice = 0;
+			string p1MoveChoiceString;
+			if (isdigit(input.at(0))) {
+				p1MoveChoice = stoi(input);
+				if (p1MoveChoice < 0 or p1MoveChoice > p1Moves.size())
+					die();
+			} else {
+				p1MoveChoiceString = input;
+				p1MoveChoiceString.at(0) = toupper(p1MoveChoiceString.at(0));
+				p1MoveChoiceString.at(p1MoveChoiceString.find(" ") + 1) = toupper(p1MoveChoiceString.at(p1MoveChoiceString.find(" ") + 1));
+			}
+			Move temp_move1;
+			check = false;
+			for (const Move &M : move_db) {
+				if (p1MoveChoice == M.index or p1MoveChoiceString == M.name) {
+					temp_move1 = M;
+					p1Moves.push_back(temp_move1);
+					check = true;
+				}
+			}
+			if (!check) die();
+			cout << activeP1.name << " used " << temp_move1.name << "!" << endl;
+			if (temp_move1.type == activeP1.type1 or temp_move1.type == activeP1.type2) // Checks if move type matches either of the attacking pokemon's types.
+				activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
+			else
+				activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense; // Formula for no STAB and no type modifier.
+			if (activeP2.hp <= 0) {
+				cout << activeP2.name << " has fainted. " << activeP1.name << " wins!" << endl;
+				exit(0);
+			} else if (activeP2.hp > 0) {
+				turn++;
 			}
 		}
-		if (!check) die();
-		cout << activeP1.name << " used " << temp_move1.name << "!" << endl;
-		if (temp_move1.type == activeP1.type1 or temp_move1.type == activeP1.type2) // Checks if move type matches either of the attacking pokemon's types.
-			activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense * 1.5; // Formula for damage with STAB modifier and no type modifier.
-		else
-			activeP2.hp = activeP2.hp - double(temp_move1.power * activeP1.attack) / activeP2.defense; // Formula for no STAB and no type modifier.
-		if (activeP2.hp <= 0) {
-			cout << activeP2.name << " has fainted. " << activeP1.name << " wins!" << endl;
-			exit(0);
-		} else if (activeP2.hp > 0) {
-			turn++;
-		}
-	}
-	if (turn % 2 == 1) { // Pokemon turn 2 code
-		cout << "What will " << activeP2.name << " do?" << endl;
-		cin.clear();
-		getline(cin, input);
-		int p2MoveChoice = 0;
-		string p2MoveChoiceString;
-		if (isdigit(input.at(0))) {
-			p2MoveChoice = stoi(input);
-			if (p2MoveChoice < 0 or p2MoveChoice > p2Moves.size())
-				die();
-		} else {
-			p2MoveChoiceString = input;
-			p2MoveChoiceString.at(0) = toupper(p2MoveChoiceString.at(0));
-			p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1) = toupper(p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1));
-		}
-		Move temp_move2;
-		check = false;
-		for (const Move &M : move_db) {
-			if (p2MoveChoice == M.index or p2MoveChoiceString == M.name) {
-				temp_move2 = M;
-				p2Moves.push_back(temp_move2);
-				check = true;
+		if (turn % 2 == 1) { // Pokemon turn 2 code
+			cout << "What will " << activeP2.name << " do?" << endl;
+			cin.clear();
+			getline(cin, input);
+			int p2MoveChoice = 0;
+			string p2MoveChoiceString;
+			if (isdigit(input.at(0))) {
+				p2MoveChoice = stoi(input);
+				if (p2MoveChoice < 0 or p2MoveChoice > p2Moves.size())
+					die();
+			} else {
+				p2MoveChoiceString = input;
+				p2MoveChoiceString.at(0) = toupper(p2MoveChoiceString.at(0));
+				p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1) = toupper(p2MoveChoiceString.at(p2MoveChoiceString.find(" ") + 1));
 			}
-		}
-		if (!check) die();
-		cout << activeP2.name << " used " << temp_move2.name << "!" << endl;
-		if (temp_move2.type == activeP2.type1 or temp_move2.type == activeP2.type2) { // Checks if move type matches either of the attacking pokemon's types.
-			activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5;
-		} // Formula for damage with STAB modifier and no type modifier.
-		else activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
-		if (activeP1.hp <= 0) {
-			cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
-			exit(0);
-		} else if (activeP1.hp > 0) {
-			turn++;
-		}
+			Move temp_move2;
+			check = false;
+			for (const Move &M : move_db) {
+				if (p2MoveChoice == M.index or p2MoveChoiceString == M.name) {
+					temp_move2 = M;
+					p2Moves.push_back(temp_move2);
+					check = true;
+				}
+			}
+			if (!check) die();
+			cout << activeP2.name << " used " << temp_move2.name << "!" << endl;
+			if (temp_move2.type == activeP2.type1 or temp_move2.type == activeP2.type2) { // Checks if move type matches either of the attacking pokemon's types.
+				activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense * 1.5;
+			} // Formula for damage with STAB modifier and no type modifier.
+			else activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
+			if (activeP1.hp <= 0) {
+				cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
+				exit(0);
+			} else if (activeP1.hp > 0) {
+				turn++;
+			}
 
+		}
 	}
-
 
 
 
