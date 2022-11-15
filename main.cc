@@ -386,7 +386,7 @@ void battle_mode() {
 			} // Formula for damage with STAB modifier and no type modifier.
 			else activeP1.hp = activeP1.hp - double(temp_move2.power * activeP2.attack) / activeP1.defense; // Formula for no STAB and no type modifier.
 			if (activeP1.hp <= 0) {
-				cout << activeP1.name << " has fainted. " << activeP1.name << " wins!" << endl;
+				cout << activeP1.name << " has fainted. " << activeP2.name << " wins!" << endl;
 				exit(0);
 			} else if (activeP1.hp > 0) {
 				turn++;
